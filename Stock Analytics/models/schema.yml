@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: dim_exchange
+    description: "Exchange dimension (Type 1)"
+    columns:
+      - name: exchange_sk
+        tests:
+          - unique
+          - not_null
+      - name: exchange_id
+        tests:
+          - not_null
+
+  - name: dim_company
+    description: "Company dimension with SCD Type 2 tracking"
+    columns:
+      - name: company_sk
+        tests:
+          - unique
+          - not_null
+      - name: company_id
+        tests:
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['ACTIVE', 'INACTIVE']
+
+  - name: dim_date
+    description: "Calendar date dimension"
+    columns:
+      - name: date_sk
+        tests:
+          - unique
+          - not_null
+      - name: calendar_date
+        tests:
+          - unique
+          - not_null
+
+  - name: fact_daily_price
+    description: "Daily stock price fact table"
+    columns:
+      - name: price_fact_sk
+        tests:
+          - unique
+          - not_null
+      - name: date_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_sk
+      - name: company_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_company')
+              field: company_sk
+      - name: exchange_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_exchange')
+              field: exchange_sk
+
+  - name: fct_corporate_actions
+    description: "Corporate actions fact table"
+    columns:
+      - name: action_fact_sk
+        tests:
+          - unique
+          - not_null
+      - name: action_type
+        tests:
+          - accepted_values:
+              values: ['SPLIT', 'BONUS', 'DIVIDEND', 'BUYBACK']

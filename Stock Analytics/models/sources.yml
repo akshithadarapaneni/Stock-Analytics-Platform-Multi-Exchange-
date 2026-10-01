@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'STOCK_ANALYTICS_DB') }}"
+    schema: BRONZE
+    description: "Raw stock feeds loaded via Snowpipe from Snowflake internal stage"
+    tables:
+      - name: raw_exchanges
+        description: "Raw exchange reference data"
+      - name: raw_companies
+        description: "Raw company master data"
+      - name: raw_prices_daily
+        description: "Raw daily stock prices and trading volumes"
+      - name: raw_corporate_actions
+        description: "Raw corporate actions including dividends, splits, buybacks"
